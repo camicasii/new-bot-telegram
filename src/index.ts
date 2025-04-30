@@ -325,3 +325,21 @@ bot.on('callback_query', (callbackQuery) => {
   const response = getResponse(data);
   bot.sendMessage(chatId, response);
 });
+bot.addListener('polling_error', (error) => {
+  console.error(`Polling error: ${error} - ${error.message}`);
+}
+);
+
+bot.addListener('callback_query', (callbackQuery) => {
+  const message = callbackQuery.message;
+  console.log(message);
+});
+  
+
+
+process.on('SIGINT', () => {
+  console.log('Bot stopped');
+  bot.stopPolling();  
+  process.exit();
+});
+

@@ -94,7 +94,7 @@ const subMenus: Record<string, TelegramBot.SendMessageOptions> = {
       ]
     }
   },
-  '📈 BROKER': {
+  '📈 BROKER DATA': {
     reply_markup: {
       inline_keyboard: [
         [

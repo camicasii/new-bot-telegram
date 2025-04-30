@@ -10,6 +10,6 @@ services:
     environment:
       - NODE_ENV=production
       - TOKEN=${TOKEN}
-    ports:
-      - "3000:3000"
+    # ports:
+      # - "3000:3000"
     restart: unless-stopped

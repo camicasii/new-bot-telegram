@@ -162,7 +162,11 @@ static async generateQR(text: string): Promise<string> {
       ctx.fillText('Sponsored by PayWay', canvasSize / 2, canvasSize - 20);
       
       // Convertir el canvas a un buffer de imagen PNG
-      const buffer = canvas.toBuffer('image/png');
+      // const buffer = canvas.toBuffer('image/png');
+      const buffer = canvas.toBuffer('image/png', { compressionLevel: 0 });
+      // application/octet-stream
+      
+      
       
       // Guardar el buffer como archivo
       await fs.writeFile(finalFilePath, buffer);

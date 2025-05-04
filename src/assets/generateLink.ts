@@ -35,7 +35,7 @@ export const generateLink = async (amount: string,telegramId:string) => {
     const markdownMessage = `
 *Detalles del Pago*
 
-📝 *Monto:* \`${amount_} USDT\`
+📝 *Monto:* \`${response.data.amount} USDT\`
 💼 *Wallet:* \`${wallet}\`
 
 _Escanea el código QR o copia la dirección de la wallet para realizar el pago._

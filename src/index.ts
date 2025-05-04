@@ -1,9 +1,7 @@
 import TelegramBot from 'node-telegram-bot-api';
 import "dotenv/config";
 import { promises as fs } from 'fs';
-import QRGenerate from './QrGenerate';
 import { generateLink } from './assets/generateLink';
-import path, { join } from 'path';
 
 // Aquí debes poner el token que te da BotFather
 const token: string = process.env.TOKEN as string;
@@ -66,30 +64,38 @@ bot.on('message', async (msg: TelegramBot.Message) => {
     || JSON.stringify(replyMarkup).includes('Por favor, ingresa un monto válido') )) {    
      const amount = text.replace(/[^0-9]/g, ''); 
      if (amount && !isNaN(Number(amount))) {
-      //  const link = await QRGenerate.generateQR(amount, msg.chat.id);    
       const {link, wallet, amount_, markdownMessage} = await generateLink(amount, msg.chat.id.toString());
       
-      // Primero enviamos la foto del QR
-const data_  =await fs.readFile(path.join(link))
-      
-      const photo = await bot.sendPhoto(chatId, data_, {
+      try {
+        // Leemos el archivo como Buffer
+        const fileBuffer = await fs.readFile(link);
         
-        caption: 'Escanea el código QR o copia la dirección de la wallet para realizar el pago.',
-        reply_markup: {
-          inline_keyboard: [
-            [
-              { text: '💰 Pagar', url: `https://t.me/MinerNewBot?start=${wallet}` }
+        // Enviar la foto del QR especificando el Content-Type correcto
+        await bot.sendPhoto(chatId, fileBuffer, {
+          caption: 'Escanea el código QR o copia la dirección de la wallet para realizar el pago.',
+          reply_markup: {
+            inline_keyboard: [
+              [
+                { text: '💰 Pagar', url: `https://t.me/MinerNewBot?start=${wallet}` }
+              ]
             ]
-          ]
-        }
-      },{filename: 'qr.png',
-        contentType: 'application/octet-stream',
-      });
-      fs.unlink(link)
-      // Luego enviamos el mensaje en Markdown con los detalles
-      await bot.sendMessage(chatId, markdownMessage, {
-        parse_mode: 'Markdown'
-      });
+          },
+        }, {
+          filename: 'qr.png',
+          contentType: 'image/png',  // Especificamos el tipo de contenido correcto
+        });
+        
+        // Limpiamos el archivo temporal
+        await fs.unlink(link);
+        
+        // Luego enviamos el mensaje en Markdown con los detalles
+        await bot.sendMessage(chatId, markdownMessage, {
+          parse_mode: 'Markdown'
+        });
+      } catch (error) {
+        console.error('Error al enviar la imagen QR:', error);
+        bot.sendMessage(chatId, 'Hubo un error al generar el código QR. Por favor, intenta nuevamente.');
+      }
      }
      else{
         bot.sendMessage(chatId, 'Por favor, ingresa un monto válido.');

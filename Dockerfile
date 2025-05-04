@@ -1,5 +1,5 @@
 # Etapa de construcción
-FROM node:22-alpine AS build
+FROM node:22.15-alpine3.21 AS build
 # 22-alpine3.20, 22.15-alpine3.20, 22.15.0-alpine3.20, jod-alpine3.20, lts-alpine3.20⁠
 WORKDIR /app
 
@@ -16,7 +16,7 @@ RUN npm run build
 
 # Etapa de producción
 # FROM node:22-alpine AS production
-FROM node:22-alpine 
+FROM node:22.15-alpine3.21
 
 WORKDIR /app
 

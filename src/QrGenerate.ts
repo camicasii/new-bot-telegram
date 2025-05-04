@@ -80,7 +80,7 @@ static async generateQR(text: string): Promise<Buffer> {
               ]
              } as Gradient,          
           },
-          "image": "https://s3.magic-api.xyz/miscellaneous/images.jpeg",
+          "image": "https://s3.magic-api.xyz/miscellaneous/images%20%281%29.png",
           // "image": join(__dirname, '..', 'assets', ''), // Ruta de la imagen
 
           "dotsOptions": {
@@ -152,7 +152,7 @@ static async generateQR(text: string): Promise<Buffer> {
       
       // Añadir el texto "Sponsored by PayWay"
       ctx.fillStyle = '#000000';
-      ctx.font = '16px Arial';
+      ctx.font = '16px Cantarell';
       ctx.textAlign = 'center';
       ctx.fillText('Sponsored by PayWay', canvasSize / 2, canvasSize - 20);
       

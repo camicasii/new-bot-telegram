@@ -85,7 +85,8 @@ static async generateQR(text: string): Promise<string> {
              } as Gradient,          
           },
           // "image": "https://s3.magic-api.xyz/miscellaneous/images%20%281%29.png",
-          "image": join(__dirname,  'assets', 'logo.png'), // Ruta de la imagen
+          // "image": join(__dirname,  'assets', 'logo.png'), // Ruta de la imagen
+          image:"https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg",
 
           "dotsOptions": {
             "type": "dots",

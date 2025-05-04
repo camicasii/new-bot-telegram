@@ -1,12 +1,12 @@
 # Etapa de construcción
-FROM node:22.15-alpine3.21 AS build
+FROM node:23-bookworm-slim AS build
 # 22-alpine3.20, 22.15-alpine3.20, 22.15.0-alpine3.20, jod-alpine3.20, lts-alpine3.20⁠
 WORKDIR /app
 
 # Copiar archivos necesarios para instalar dependencias
 COPY package.json package-lock.json ./
 # Instalar dependencias
-RUN apk add --no-cache python3 py3-pip
+# RUN apk add --no-cache python3 py3-pip
 # RUN npm install -g npm
 RUN npm install
 
@@ -19,7 +19,7 @@ RUN npm run build
 
 # Etapa de producción
 # FROM node:22-alpine AS production
-FROM node:22.15-alpine3.21
+FROM node:23-bookworm-slim
 
 WORKDIR /app
 
@@ -28,7 +28,7 @@ COPY --from=build /app/dist ./dist
 COPY --from=build /app/package.json ./
 COPY --from=build /app/package-lock.json ./
 # RUN npm install -g npm
-RUN apk add --no-cache python3 py3-pip
+# RUN apk add --no-cache python3 py3-pip
 RUN npm install --only=production
 # Establecer la variable de entorno para producción
 ENV NODE_ENV=production

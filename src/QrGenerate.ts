@@ -8,9 +8,8 @@ import nodeCanvas from 'canvas';
 
 // Registramos la fuente al inicio
 const fontPath = join(__dirname, 'assets', 'Barriecito-Regular.ttf');
-// /usr/share/fonts/truetype/dejavu/DejaVuSerif-Bold.ttf
+
 registerFont(fontPath, { family: 'Barriecito' });
-registerFont('/usr/share/fonts/truetype/dejavu/DejaVuSerif-Bold.ttf', { family: 'DejaVuSerif' });
 
 export default class QRGenerate {
     constructor() {
@@ -85,8 +84,8 @@ static async generateQR(text: string): Promise<string> {
               ]
              } as Gradient,          
           },
-          "image": "https://s3.magic-api.xyz/miscellaneous/images%20%281%29.png",
-          // "image": join(__dirname, '..', 'assets', ''), // Ruta de la imagen
+          // "image": "https://s3.magic-api.xyz/miscellaneous/images%20%281%29.png",
+          "image": join(__dirname,  'assets', 'logo.png'), // Ruta de la imagen
 
           "dotsOptions": {
             "type": "dots",
@@ -157,7 +156,7 @@ static async generateQR(text: string): Promise<string> {
       
       // Añadir el texto "Sponsored by PayWay"
       ctx.fillStyle = '#000000';
-      ctx.font = '16px DejaVuSerif';
+      ctx.font = '16px Barriecito';
       ctx.textAlign = 'center';
       ctx.fillText('Sponsored by PayWay', canvasSize / 2, canvasSize - 20);
       

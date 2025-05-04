@@ -22,7 +22,6 @@ RUN npm run build
 FROM node:23-bookworm-slim
 
 WORKDIR /app
-RUN  ls /usr/share/fonts/
 # Copiar solo los archivos necesarios desde la etapa de construcción
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/package.json ./

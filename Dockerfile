@@ -6,7 +6,7 @@ WORKDIR /app
 # Copiar archivos necesarios para instalar dependencias
 COPY package.json package-lock.json ./
 # Instalar dependencias
-RUN apk add python
+RUN apk add --no-cache python3 py3-pip
 # RUN npm install -g npm
 RUN npm install
 
@@ -28,7 +28,7 @@ COPY --from=build /app/dist ./dist
 COPY --from=build /app/package.json ./
 COPY --from=build /app/package-lock.json ./
 # RUN npm install -g npm
-RUN apk add python
+RUN apk add --no-cache python3 py3-pip
 RUN npm install --only=production
 # Establecer la variable de entorno para producción
 ENV NODE_ENV=production

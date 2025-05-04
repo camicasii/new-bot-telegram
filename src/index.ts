@@ -1,13 +1,8 @@
 import TelegramBot from 'node-telegram-bot-api';
 import "dotenv/config";
 import { promises as fs } from 'fs';
-import { join } from 'path';
-// Reemplazando QRCode por QRCodeStyling
-import QRCodeStyling,{Gradient, Options} from "qr-code-styling";
-import { DotType, dotTypes } from "qr-code-styling";
-import { JSDOM } from "jsdom";
-import { Canvas, createCanvas, loadImage } from 'canvas';
-import  nodeCanvas from 'canvas';
+import QRGenerate from './QrGenerate';
+import { generateLink } from './assets/generateLink';
 
 // Aquí debes poner el token que te da BotFather
 const token: string = process.env.TOKEN as string;
@@ -17,7 +12,7 @@ const bot: TelegramBot = new TelegramBot(token, { polling: true });
 // Definir comandos disponibles
 bot.setMyCommands([
   { command: '/start', description: 'Envía un mensaje de bienvenida' },
-  { command: '/pagar', description: 'Muestra una imagen de pago' },
+  // { command: '/pagar', description: 'Muestra una imagen de pago' },
   { command: '/qr', description: 'Genera un código QR' }
 ]);
 
@@ -36,160 +31,7 @@ const mainMenu: TelegramBot.SendMessageOptions = {
   }
 };
 
-// Función para generar un código QR con texto "Sponsored by PayWay"
-async function generateQR(text: string): Promise<string> {
-  const tempDir = join(__dirname, '..', 'temp');
-  
-  // Asegurarse de que el directorio temporal existe
-  try {
-    await fs.mkdir(tempDir, { recursive: true });
-  } catch (error) {
-    console.error('Error al crear directorio temporal:', error);
-  }
-  
-  const finalFilePath = join(tempDir, `qr-final-${Date.now()}.png`);
-  
-  try {
-    // Crear un canvas personalizado con el texto "Sponsored by PayWay"
-    const canvasSize = 400;
-    const qrSize = 300; // Tamaño reducido para el QR
-    
-    const canvas = createCanvas(canvasSize, canvasSize);
-    const ctx = canvas.getContext('2d');
-    
-    if (!ctx) {
-      throw new Error('No se pudo obtener el contexto del canvas');
-    }
-    
-    // Dibujar el fondo blanco
-    ctx.fillStyle = '#FFFFFF';
-    ctx.fillRect(0, 0, canvasSize, canvasSize);
-    
-    // Crear el QR estilizado
-    const qrOptions: Options = {      
-      
-        "type": "canvas" as const,
-        "shape": "square",
-        // "width": 350,
-        // "height": 350,
-        "data": "https://qr-code-styling.com",
-        "margin": 0,
-        "qrOptions": {
-          // "typeNumber": "9",
-          "mode": "Byte",
-          "errorCorrectionLevel": "H"
-        },
-        "imageOptions": {
-          "saveAsBlob": true,
-          "hideBackgroundDots": true,
-          "imageSize": 0.5,
-          "margin": 1
-        },
-       
-        "backgroundOptions": {
-          "round": 0,
-          "color": "#ffffff",
-          gradient:{
-            type: "linear",
-            rotation: 0,
-            colorStops: [
-              {
-                offset: 0,
-                color: "#ffffff"
-              },
-              {
-                offset: 1,
-                color: "#ffffff"
-              }
-            ]
-           } as Gradient,          
-        },
-        "image": "https://sdmntpreastus2.oaiusercontent.com/files/00000000-ccf0-61f6-9d4e-2f638b45b2be/raw?se=2025-05-04T02%3A47%3A45Z&sp=r&sv=2024-08-04&sr=b&scid=d9319757-0787-5c78-acf3-b3ef03a1247e&skoid=de76bc29-7017-43d4-8d90-7a49512bae0f&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-05-04T00%3A46%3A51Z&ske=2025-05-05T00%3A46%3A51Z&sks=b&skv=2024-08-04&sig=nWAtz3tSp84T5mqp%2BVAHGXgUyLwtE189jTKdJWJbshg%3D",
-        "dotsOptions": {
-          "type": "dots",
-          "color": "#6a1a4c",
-          "roundSize": true,
-          "gradient": {
-            "type": "linear",
-            "rotation": 0,
-            "colorStops": [
-              {
-                "offset": 0,
-                "color": "#002e1f"
-              },
-              {
-                "offset": 1,
-                "color": "#57a617"
-              }
-            ]
-          }
-        },
-        "cornersSquareOptions": {
-          "type": "extra-rounded",
-          "color": "#000000",
-          gradient: {
-            "type": "linear",
-            "rotation": 0,            
-            "colorStops": [
-              {
-                "offset": 0,
-                "color": "#000000"  
-              }]
-            }
-        
-        
-        
-          
-          
-        },
-        "cornersDotOptions": {
-          // "type": "",
-          "color": "#d32222"
-        },      
 
-      
-    };
-    
-    // Para canvas type
-    const qrCode = new QRCodeStyling({
-      jsdom: JSDOM,
-      nodeCanvas: nodeCanvas ,
-      //@ts-ignore // @ts-ignore
-      ...qrOptions,      
-    });
-    
-    // Generar el QR como buffer
-    const qrBuffer = await new Promise<Buffer>((resolve, reject) => {
-      qrCode.getRawData("png")
-        .then((blob: any) => resolve(Buffer.from(blob)))
-        .catch((error: any) => reject(error));
-    });
-    
-    // Cargar el buffer como imagen
-    const qrImage = await loadImage(qrBuffer);
-    
-    // Dibujar el QR en un costado
-    ctx.drawImage(qrImage, (canvasSize-qrSize)/2, (canvasSize - qrSize) / 2); // Posicionado a la izquierda
-    
-    // Añadir el texto "Sponsored by PayWay"
-    ctx.fillStyle = '#000000';
-    ctx.font = '16px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText('Sponsored by PayWay', canvasSize / 2, canvasSize - 20);
-    
-    // Convertir el canvas a un buffer de imagen PNG
-    const buffer = canvas.toBuffer('image/png');
-    
-    // Guardar el buffer como archivo
-    await fs.writeFile(finalFilePath, buffer);
-    
-    console.log(`QR generado: ${finalFilePath}`);
-    return finalFilePath;
-  } catch (error) {
-    console.error('Error al generar el código QR:', error);
-    throw error;
-  }
-}
 
 // Manejador de mensajes
 bot.on('message', async (msg: TelegramBot.Message) => {
@@ -211,7 +53,7 @@ bot.on('message', async (msg: TelegramBot.Message) => {
     await handleQRRequest(chatId);
     return;
   }
-  console.log(msg.reply_to_message?.text);
+  
   
   // Verificar si el mensaje es en respuesta a una solicitud de QR
   if (msg.reply_to_message) {
@@ -219,19 +61,38 @@ bot.on('message', async (msg: TelegramBot.Message) => {
     const replyMarkup = msg.reply_to_message;
     console.log(JSON.stringify(replyMarkup),JSON.stringify(replyMarkup).includes('código QR'));
     
-    if (replyMarkup && JSON.stringify(replyMarkup).includes('código QR')) {
-      await generateAndSendQR(chatId, text);
-      return;
+    if (replyMarkup &&( JSON.stringify(replyMarkup).includes('Ingrese el monto que desea agregar')
+    || JSON.stringify(replyMarkup).includes('Por favor, ingresa un monto válido') )) {    
+     const amount = text.replace(/[^0-9]/g, ''); 
+     if (amount && !isNaN(Number(amount))) {
+      //  const link = await QRGenerate.generateQR(amount, msg.chat.id);    
+      const {link, wallet, amount_, markdownMessage} = await generateLink(amount, msg.chat.id.toString());
+      
+      // Primero enviamos la foto del QR
+      await bot.sendPhoto(chatId, link, {
+        caption: `Código QR para pago de ${amount_} USDT`
+      });
+      
+      // Luego enviamos el mensaje en Markdown con los detalles
+      await bot.sendMessage(chatId, markdownMessage, {
+        parse_mode: 'Markdown'
+      });
+     }
+     else{
+        bot.sendMessage(chatId, 'Por favor, ingresa un monto válido.');
+     }
     }
+    
   }
 });
 
 // Función para manejar la solicitud de QR
 async function handleQRRequest(chatId: number): Promise<void> {
-  bot.sendMessage(chatId, '¿Qué texto o URL quieres convertir en código QR? Responde a este mensaje:', {
+  bot.sendMessage(chatId, 
+    'Ingrese el monto que desea agregar', {
     reply_markup: {
       force_reply: true,
-      input_field_placeholder: 'Ejemplo: https://telegram.org',
+      input_field_placeholder: 'Ejemplo: 100$',
       selective: true,
     },
   });
@@ -242,7 +103,7 @@ async function generateAndSendQR(chatId: number, text: string): Promise<void> {
   try {
     bot.sendMessage(chatId, 'Generando QR, espera un momento...');
     
-    const qrPath = await generateQR(text);
+    const qrPath = await QRGenerate.generateQR(text);
     console.log(`QR generado: ${qrPath}`);
     
     // Enviar el QR como foto

@@ -7,7 +7,7 @@ import { createCanvas, loadImage, registerFont } from 'canvas';
 import nodeCanvas from 'canvas';
 
 // Registramos la fuente al inicio
-const fontPath = join(__dirname, 'assets', 'cd8f775f4431481c9960a8f5c4fcbd6a-18.fnt');
+const fontPath = join(__dirname, 'assets', 'Barriecito-Regular.ttf');
 // /usr/share/fonts/truetype/dejavu/DejaVuSerif-Bold.ttf
 registerFont(fontPath, { family: 'Barriecito' });
 

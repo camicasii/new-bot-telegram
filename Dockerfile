@@ -1,6 +1,5 @@
 # Etapa de construcción
 FROM node:23-bookworm-slim AS build
-# 22-alpine3.20, 22.15-alpine3.20, 22.15.0-alpine3.20, jod-alpine3.20, lts-alpine3.20⁠
 WORKDIR /app
 
 # Copiar archivos necesarios para instalar dependencias
@@ -17,8 +16,11 @@ COPY . .
 # Compilar el proyecto TypeScript
 RUN npm run build
 
+# Copiar manualmente los archivos de assets al directorio dist
+RUN mkdir -p dist/assets
+RUN cp -r src/assets/* dist/assets/ || true
+
 # Etapa de producción
-# FROM node:22-alpine AS production
 FROM node:23-bookworm-slim
 
 WORKDIR /app
@@ -26,6 +28,8 @@ WORKDIR /app
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/package.json ./
 COPY --from=build /app/package-lock.json ./
+# Asegurarse de que la carpeta assets existe y contiene los archivos de fuentes
+COPY --from=build /app/src/assets ./dist/assets
 # RUN npm install -g npm
 # RUN apk add --no-cache python3 py3-pip
 RUN npm install --only=production

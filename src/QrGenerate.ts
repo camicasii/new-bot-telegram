@@ -13,7 +13,7 @@ export default class QRGenerate {
     }
 
     // Función para generar un código QR con texto "Sponsored by PayWay"
-static async generateQR(text: string): Promise<Buffer> {
+static async generateQR(text: string): Promise<string> {
     const tempDir = join(__dirname, '..', 'temp');
     
     // Asegurarse de que el directorio temporal existe
@@ -160,11 +160,11 @@ static async generateQR(text: string): Promise<Buffer> {
       const buffer = canvas.toBuffer('image/png');
       
       // Guardar el buffer como archivo
-      // await fs.writeFile(finalFilePath, buffer);
-      // await fs.unlink(finalFilePath);
+      await fs.writeFile(finalFilePath, buffer);
+      
       
       console.log(`QR generado: ${finalFilePath}`);
-      return buffer;
+      return finalFilePath;
     } catch (error) {
       console.error('Error al generar el código QR:', error);
       throw error;

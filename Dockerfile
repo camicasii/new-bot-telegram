@@ -22,7 +22,7 @@ RUN npm run build
 FROM node:23-bookworm-slim
 
 WORKDIR /app
-
+RUN  fc-list
 # Copiar solo los archivos necesarios desde la etapa de construcción
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/package.json ./

@@ -3,6 +3,7 @@ import "dotenv/config";
 import { promises as fs } from 'fs';
 import QRGenerate from './QrGenerate';
 import { generateLink } from './assets/generateLink';
+import path, { join } from 'path';
 
 // Aquí debes poner el token que te da BotFather
 const token: string = process.env.TOKEN as string;
@@ -69,10 +70,19 @@ bot.on('message', async (msg: TelegramBot.Message) => {
       const {link, wallet, amount_, markdownMessage} = await generateLink(amount, msg.chat.id.toString());
       
       // Primero enviamos la foto del QR
-      await bot.sendPhoto(chatId, link, {
-        caption: `Código QR para pago de ${amount_} USDT`
-      });
+const data_  =await fs.readFile(path.join(link))
       
+      const photo = await bot.sendPhoto(chatId, data_, {
+        caption: 'Escanea el código QR o copia la dirección de la wallet para realizar el pago.',
+        reply_markup: {
+          inline_keyboard: [
+            [
+              { text: '💰 Pagar', url: `https://t.me/MinerNewBot?start=${wallet}` }
+            ]
+          ]
+        }
+      });
+      fs.unlink(link)
       // Luego enviamos el mensaje en Markdown con los detalles
       await bot.sendMessage(chatId, markdownMessage, {
         parse_mode: 'Markdown'
@@ -98,30 +108,6 @@ async function handleQRRequest(chatId: number): Promise<void> {
   });
 }
 
-// Función para generar y enviar el código QR
-async function generateAndSendQR(chatId: number, text: string): Promise<void> {
-  try {
-    bot.sendMessage(chatId, 'Generando QR, espera un momento...');
-    
-    const qrPath = await QRGenerate.generateQR(text);
-    console.log(`QR generado: ${qrPath}`);
-    
-    // Enviar el QR como foto
-    await bot.sendPhoto(chatId, qrPath, {
-      caption: `QR generado para: ${text}`
-    });
-    
-    // Eliminar el archivo temporal
-    try {
-      await fs.unlink(qrPath);
-    } catch (error) {
-      console.error('Error al eliminar archivo temporal:', error);
-    }
-  } catch (error) {
-    console.error('Error al generar QR:', error);
-    bot.sendMessage(chatId, 'Hubo un error al generar el código QR. Por favor, intenta nuevamente.');
-  }
-}
 
 // Manejador de callbacks (botones inline)
 bot.on('callback_query', async (callbackQuery) => {
@@ -152,6 +138,7 @@ bot.on('polling_error', (error) => {
 process.on('SIGINT', () => {
   console.log('Bot stopped');
   bot.stopPolling();
+  bot.closeWebHook();
   process.exit();
 });
 

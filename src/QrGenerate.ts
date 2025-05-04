@@ -80,7 +80,9 @@ static async generateQR(text: string): Promise<Buffer> {
               ]
              } as Gradient,          
           },
-          "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqiV4aIoT9rHrcHUH7Amdy3qst_vEFSe6pmw&s",
+          "image": "https://s3.magic-api.xyz/miscellaneous/images.jpeg",
+          // "image": join(__dirname, '..', 'assets', ''), // Ruta de la imagen
+
           "dotsOptions": {
             "type": "dots",
             "color": "#6a1a4c",
@@ -158,8 +160,8 @@ static async generateQR(text: string): Promise<Buffer> {
       const buffer = canvas.toBuffer('image/png');
       
       // Guardar el buffer como archivo
-      await fs.writeFile(finalFilePath, buffer);
-      await fs.unlink(finalFilePath);
+      // await fs.writeFile(finalFilePath, buffer);
+      // await fs.unlink(finalFilePath);
       
       console.log(`QR generado: ${finalFilePath}`);
       return buffer;

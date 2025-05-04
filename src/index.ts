@@ -83,7 +83,7 @@ const data_  =await fs.readFile(path.join(link))
           ]
         }
       },{filename: 'qr.png',
-        contentType: 'image/png',
+        contentType: 'application/octet-stream',
       });
       fs.unlink(link)
       // Luego enviamos el mensaje en Markdown con los detalles

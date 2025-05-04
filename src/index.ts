@@ -73,6 +73,7 @@ bot.on('message', async (msg: TelegramBot.Message) => {
 const data_  =await fs.readFile(path.join(link))
       
       const photo = await bot.sendPhoto(chatId, data_, {
+        
         caption: 'Escanea el código QR o copia la dirección de la wallet para realizar el pago.',
         reply_markup: {
           inline_keyboard: [
@@ -81,6 +82,8 @@ const data_  =await fs.readFile(path.join(link))
             ]
           ]
         }
+      },{filename: 'qr.png',
+        contentType: 'image/png',
       });
       fs.unlink(link)
       // Luego enviamos el mensaje en Markdown con los detalles

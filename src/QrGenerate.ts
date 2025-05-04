@@ -152,7 +152,7 @@ static async generateQR(text: string): Promise<string> {
       
       // Añadir el texto "Sponsored by PayWay"
       ctx.fillStyle = '#000000';
-      ctx.font = '16px DejaVuSerif';
+      ctx.font = '16px DejaVu Sans';
       ctx.textAlign = 'center';
       ctx.fillText('Sponsored by PayWay', canvasSize / 2, canvasSize - 20);
       
